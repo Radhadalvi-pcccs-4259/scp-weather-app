@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import requests
 import os
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all origins
 
-# Replace with your actual API keys
+# API KEYS
 OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', 'efeccaad7cc9696a66ec646e53d395a6')
 AIR_QUALITY_API_KEY = os.getenv('AIR_QUALITY_API_KEY', 'cbd95901-ba9a-4b3f-a9ae-0c88ae94d6d5')
 
