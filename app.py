@@ -76,6 +76,28 @@ def get_air_quality():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/resume_keywords', methods=['POST'])
+def get_resume_keywords():
+    if 'resume' not in request.files:
+        return jsonify({'error': 'Resume file is required'}), 400
+
+    try:
+        resume_file = request.files['resume']
+
+        # Send file to Resume App's analyze_resume endpoint
+        resume_api_url = 'http://16.171.154.178:5000/analyze_resume'
+        files = {'resume': (resume_file.filename, resume_file.stream, resume_file.mimetype)}
+        response = requests.post(resume_api_url, files=files)
+
+        return jsonify({
+            'source': 'Resume Analyzer API',
+            'analyzed_data': response.json()
+        })
+
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch resume keywords: {str(e)}'}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
