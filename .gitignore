@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+details.txt
+pr.txt
+brief.docx
+sample.txt
