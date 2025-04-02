@@ -1,0 +1,37 @@
+name: Full Auto Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_KEY }}
+        script: |
+          # Remove old app
+          rm -rf ~/scp-weather-app
+
+          # Clone latest from GitHub
+          git clone https://github.com/Radhadalvi-pcccs-4259/scp-weather-app.git
+          cd scp-weather-app
+
+          # Setup virtual environment
+          python3.11 -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+          # Kill previous gunicorn process (if running)
+          pkill gunicorn || true
+
+          # Run app in background
+          nohup venv/bin/gunicorn --bind 0.0.0.0:5000 app:app > log.txt 2>&1 &
